@@ -1,26 +1,45 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import * as userActions from './actions/userActions'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {Route, BrowserRouter as Router} from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './views/Home';
+import Display from './views/Display';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+    componentDidMount() {
+        let {actions} = this.props;
+        actions.fetchData();
+    }
+
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Navbar/>
+                    <div className = "container">
+                      <Route exact path = "/" component = {Home} />
+                      <Route exact path = "/pokemon/:name" component = {Display}/>
+                    </div>
+                </div>
+            </Router>
+        )
+    }
 }
 
-export default App;
+function mapStateToProps(state, ownProps) {
+    return {
+        user: state.user
+    };
+  }
+
+  function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(userActions, dispatch)
+    };
+  }
+
+  export default connect(mapStateToProps, mapDispatchToProps)(App);
